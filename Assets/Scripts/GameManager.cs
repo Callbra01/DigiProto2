@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
 
     public float timeModifier = 1;
 
+    public int lives = 3;
+    public int ballHitCount = 0;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -52,19 +55,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerScore < 0 || hasGameEnded)
+        if (lives <= 0)
         {
             PlayerPrefs.SetInt("Score", playerScore);
             SceneManager.LoadScene("Score Scene");
         }
 
-        scoreTextReference.text = $"Score: {playerScore}";
+        scoreTextReference.text = $"Lives: {lives} | Score: {playerScore}";
 
-        if (!hasGameEnded)
-        {
-            storedBallPos = ballReference.transform.position;
-            storedPaddlePos = paddleReference.transform.position;
-        }
 
         HandleSlowDown();
 
@@ -72,12 +70,15 @@ public class GameManager : MonoBehaviour
 
     public void HandleSlowDown()
     {
-        if (powerSlider.value >= 0f)
+        if (powerSlider.value >= 0.3f)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space))
             {
-                timeModifier = 0.5f;
-                powerSlider.value -= 0.3f;
+                if (powerSlider.value >= 0.1f)
+                {
+                    timeModifier = 0.5f;
+                }
+                powerSlider.value -= 0.2f * Time.deltaTime;
             }
             else
             {
@@ -88,6 +89,7 @@ public class GameManager : MonoBehaviour
     public void BallHitBounds()
     {
         playerScore -= boundPenalty;
+        lives--;
         ballReference.gameObject.transform.position = Vector3.zero;
     }
 

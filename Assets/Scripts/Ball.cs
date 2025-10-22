@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
     public float ballSpeed = 4f;
     public float ballSpeedIncrease = 0.2f;
 
-    GameManager managerRef = GameManager.instance;
+    GameManager gameManagerRef;
 
     Rigidbody2D rb;
     private void Awake()
@@ -33,6 +33,7 @@ public class Ball : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameManagerRef = GameManager.instance;
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -44,7 +45,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = intendedDir * ballSpeed * managerRef.timeModifier;
+        rb.velocity = intendedDir * ballSpeed * gameManagerRef.timeModifier;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -53,6 +54,12 @@ public class Ball : MonoBehaviour
         {
             GameManager.instance.IncrementScore();
             ballSpeed += ballSpeedIncrease;
+            GameManager.instance.ballHitCount++;
+
+            if (GameManager.instance.ballHitCount % 10 == 0)
+            {
+                GameManager.instance.lives++;
+            }
             intendedDir = CalcDir();
         }
 

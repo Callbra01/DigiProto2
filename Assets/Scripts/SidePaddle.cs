@@ -13,11 +13,12 @@ public class SidePaddle : MonoBehaviour
 
     public bool reverse = false;
 
-    GameManager gameManagerRef = GameManager.instance;
+    GameManager gameManagerRef;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameManagerRef = GameManager.instance;
         rb = GetComponent<Rigidbody2D>();
     }
 
