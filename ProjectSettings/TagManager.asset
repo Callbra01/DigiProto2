@@ -7,6 +7,7 @@ TagManager:
   - Paddle
   - Ball
   - Bound
+  - SpeedDecrease
   layers:
   - Default
   - TransparentFX

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,6 +23,12 @@ public class GameManager : MonoBehaviour
     int scoreIncreaseAmt = 100;
     int streakModifier = 1;
 
+    int boundPenalty = 50;
+
+    public Slider powerSlider;
+
+    public float timeModifier = 1;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -30,7 +38,7 @@ public class GameManager : MonoBehaviour
         else
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -44,6 +52,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerScore < 0 || hasGameEnded)
+        {
+            PlayerPrefs.SetInt("Score", playerScore);
+            SceneManager.LoadScene("Score Scene");
+        }
+
         scoreTextReference.text = $"Score: {playerScore}";
 
         if (!hasGameEnded)
@@ -51,15 +65,38 @@ public class GameManager : MonoBehaviour
             storedBallPos = ballReference.transform.position;
             storedPaddlePos = paddleReference.transform.position;
         }
+
+        HandleSlowDown();
+
     }
 
+    public void HandleSlowDown()
+    {
+        if (powerSlider.value >= 0f)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                timeModifier = 0.5f;
+                powerSlider.value -= 0.3f;
+            }
+            else
+            {
+                timeModifier = 1f;
+            }
+        }
+    }
     public void BallHitBounds()
     {
-        hasGameEnded = true;
+        playerScore -= boundPenalty;
+        ballReference.gameObject.transform.position = Vector3.zero;
     }
 
     public void IncrementScore()
     {
         playerScore += scoreIncreaseAmt * streakModifier;
+        if (powerSlider.value < 1)
+        {
+            powerSlider.value += 0.1f;
+        }
     }
 }

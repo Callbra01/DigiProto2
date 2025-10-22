@@ -12,6 +12,9 @@ public class Ball : MonoBehaviour
     Vector2 intendedDir = Vector2.up;
 
     public float ballSpeed = 4f;
+    public float ballSpeedIncrease = 0.2f;
+
+    GameManager managerRef = GameManager.instance;
 
     Rigidbody2D rb;
     private void Awake()
@@ -23,7 +26,7 @@ public class Ball : MonoBehaviour
         else
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -41,19 +44,29 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = intendedDir * ballSpeed;
+        rb.velocity = intendedDir * ballSpeed * managerRef.timeModifier;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Paddle")
         {
+            GameManager.instance.IncrementScore();
+            ballSpeed += ballSpeedIncrease;
             intendedDir = CalcDir();
         }
 
         if (collision.gameObject.tag == "Bound")
         {
             GameManager.instance.BallHitBounds();
+        }
+
+        if (collision.gameObject.tag == "SpeedDecrease")
+        {
+            if (ballSpeed > 8)
+                ballSpeed -= ballSpeed * 0.5f;
+
+            intendedDir = -intendedDir;
         }
     }
 
