@@ -4,10 +4,23 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
+    public static Paddle instance { get; private set; }
 
     float playerInput = 0;
     public float paddleSpeed = 10;
 
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
 
     // Start is called before the first frame update

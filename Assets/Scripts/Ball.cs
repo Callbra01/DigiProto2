@@ -5,6 +5,8 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
+    public static Ball instance {  get; private set; }
+
     public Transform paddleTransform;
 
     Vector2 intendedDir = Vector2.up;
@@ -12,6 +14,18 @@ public class Ball : MonoBehaviour
     public float ballSpeed = 4f;
 
     Rigidbody2D rb;
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +49,11 @@ public class Ball : MonoBehaviour
         if (collision.gameObject.tag == "Paddle")
         {
             intendedDir = CalcDir();
+        }
+
+        if (collision.gameObject.tag == "Bound")
+        {
+            GameManager.instance.BallHitBounds();
         }
     }
 
