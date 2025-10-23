@@ -34,7 +34,7 @@ public class Paddle : MonoBehaviour
     {
         playerInput = Input.GetAxisRaw("Horizontal");
 
-        transform.Rotate(0, 0, paddleSpeed * -playerInput);
+        transform.Rotate(0, 0, paddleSpeed * -playerInput * Time.deltaTime);
 
         if (playerInput == -1)
         {
